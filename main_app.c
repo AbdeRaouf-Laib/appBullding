@@ -1,15 +1,8 @@
 #include <stdio.h>
 #include <ncurses.h>
-/**/
 #include "faceApp.h"
 
 
-
-/*Variables are used to define colors*/
-#define BW 1
-#define BLW 2
-#define BLB 3
-#define RB 4
 
 
 
