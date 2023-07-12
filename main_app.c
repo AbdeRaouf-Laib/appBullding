@@ -11,13 +11,16 @@ WINDOW * W__vertion_sponsor;
 WINDOW * W__ABOUT;
 WINDOW * W__list_of_using;
 WINDOW * W__F1;
+WINDOW * W__main;
 WINDOW * W__list2_of_using;
+WINDOW * W__how_use;
+WINDOW * W__return;
+WINDOW * W__exit;
 /*Variables are used to define colors*/
 #define BW 1
 #define BLW 2
 #define BLB 3
 #define RB 4
-
 
 //const Value
 #define welcome "WELCOME; to,"
@@ -29,11 +32,27 @@ WINDOW * W__list2_of_using;
 #define esc 27
 #define f1 265
 #define space 32
-
+#define main__width 18
+#define main__height 3
+#define list__width 22
+#define list__height 19 
+#define yx__main 0 
+#define width__list2 22
+#define heigth__list2 19
+#define y__list2 3
+#define x__list2 1
+#define returnandexit__width 19
+#define returnanfexit__heigth 3
 //define values
 int Fonction__Key__values;
-int Key__values;
-
+int Key__values1;
+int Key__values2;
+int effect__leftandright = 0;
+int effect__upanddown1 = 0;
+int effect__upanddown2 = 0;
+int effect__upanddown3 = 0;
+int y__W__list2;
+int x__W__lisr2;
 //declration of fonction
 void Color(); 
 int print_face();
@@ -44,9 +63,12 @@ int face_hello(int *y1,int *x1);
 void face_title(int y1,int x1,int *z1,int *r1);
 void face_list(int z1,int r1);
 int face_F1();
-
 int print_face2();
 int print_list_using();
+void print_list2_of_using();
+void F__list2_of_using();
+void F__how_use();
+void F__returnandexit();
 
 int main(){
     initscr();
@@ -59,6 +81,7 @@ int main(){
     mousemask(ALL_MOUSE_EVENTS, NULL);
     refresh();
     print_face();
+    
     endwin();
 }
 
@@ -74,7 +97,7 @@ void Color(){
 //face app fonction
 int print_face(){
     dub:
-    Key__values = curs_down;
+    Key__values1 = curs_down;
     int k = 0;
     int b;
     do{
@@ -93,36 +116,36 @@ int print_face(){
         delwin(W__welcome);
         delwin(W__list_of_using);
         delwin(W__vertion_sponsor);
-            Key__values = getch();
-            if(Key__values == curs_down || Key__values == curs_up)
+            Key__values1 = getch();
+            if(Key__values1 == curs_down || Key__values1 == curs_up)
                 k++;
 
             if(k == 1){
-                if(Key__values == enter){
+                if(Key__values1 == enter){
                     clear();
                     refresh();
-                    Key__values = Face_About();
+                    Key__values1 = Face_About();
                     break;
                 }
             }
             if(k > 1)
                 k = 0;
 
-    }while( Key__values != enter &&  Key__values != esc && Key__values != f1);
-    if(Key__values == f1){
+    }while( Key__values1 != enter &&  Key__values1 != esc && Key__values1 != f1);
+    if(Key__values1 == f1){
         clear();
         refresh();
-        Key__values = face_F1();
+        Key__values1 = face_F1();
     }
-    if(Key__values == 0)
+    if(Key__values1 == 0)
         goto dub;  
-    if(Key__values == enter){
+    if(Key__values1 == enter){
         clear();
         refresh();
-
+        print_face2();
     }
-    if(Key__values == esc)
-        return Key__values;
+    if(Key__values1 == esc)
+        return Key__values1;
     
 }
 //print the vertion and sponsor
@@ -217,8 +240,89 @@ int face_F1(){
         }
 }
 int print_face2(){
-    
-    
-    
+    do{
+        if(Key__values2 == curs_right)
+            effect__leftandright++;
+        else if(Key__values2 == curs_left)
+            effect__leftandright--;
+        if(effect__leftandright < 0)
+            effect__leftandright = 2;
+        else if(effect__leftandright > 2)
+            effect__leftandright = 0;
+        if(effect__leftandright == 0)
+            if(Key__values2 == 258 || Key__values2 == 259)
+                effect__upanddown1++;
+        if(effect__upanddown1 > 1)
+            effect__upanddown1 = 0;
+        refresh();
+        print_list2_of_using();
+    }while(Key__values2 != 10 && Key__values2 != 32 && Key__values2 != 27);
     return 0;
+}
+
+void print_list2_of_using(){
+    W__main = newwin(main__height,main__width,yx__main,yx__main);
+    wborder(W__main,'|','|','-','-','+','+','+','+');
+    if(effect__leftandright != 0){
+        F__list2_of_using();
+        wattron(W__main,A_BOLD);
+            mvwprintw(W__main,1,7,"main");
+        wattroff(W__main,A_BOLD);
+   }
+   else if(effect__leftandright == 0){
+        F__list2_of_using();
+        wbkgd(W__main,COLOR_PAIR(1));
+        wattron(W__main,A_BOLD);
+            mvwprintw(W__main,1,7,"main");
+        wattroff(W__main,A_BOLD);
+   }
+    wrefresh(W__main);
+}
+void F__list2_of_using(){
+        W__list2_of_using = newwin(heigth__list2,width__list2,y__list2,x__list2);
+        if(effect__leftandright == 0){
+            box(W__list2_of_using,0,0);
+        }
+        F__how_use();
+        F__returnandexit();
+        wrefresh(W__list2_of_using);
+}
+void F__how_use(){
+    W__how_use = subwin(W__list2_of_using ,4 ,19 ,2 ,2 );
+    if(effect__leftandright != 0){
+        wclear(W__how_use);
+    }
+    else{
+        mvwprintw(W__list2_of_using,2,1.5,"('ENTER'):to selcte");
+        mvwprintw(W__list2_of_using,4,1.5,"('SPACE'):to returne");
+        mvwprintw(W__list2_of_using,6,1.5,"('ESC'):to exit");
+        wrefresh(W__how_use);
+    }
+}
+void F__returnandexit(){
+    W__return = subwin(W__list2_of_using,3,19,11,2);
+    W__exit = subwin(W__list2_of_using,3,19,14,2);
+    if(effect__leftandright != 0){
+        wclear(W__exit);
+        wclear(W__return);
+    }
+    else if(effect__leftandright == 0){
+        if(effect__upanddown1 == 0){
+                wattron(W__return,COLOR_PAIR(3));
+                box(W__return,0,0);
+                mvwprintw(W__return,1,1.5,"*.....return   ");
+                wattroff(W__return,COLOR_PAIR(3)); 
+                box(W__exit,0,0);
+                mvwprintw(W__exit,1,1.5,"*.....exit   ");
+                wrefresh(W__exit);    
+            }  
+        else if(effect__upanddown1 == 1){   
+            box(W__return,0,0);
+            mvwprintw(W__return,1,1.5,"*.....return");
+            wattron(W__exit,COLOR_PAIR(3));
+               box(W__exit,0,0);
+               mvwprintw(W__exit,1,1.5,"*.....exit       ");
+            wattroff(W__exit,COLOR_PAIR(3));
+        }
+    }    
 }
