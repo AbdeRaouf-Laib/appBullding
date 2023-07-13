@@ -1,6 +1,42 @@
+/************************************LICENCE**************************************\
+                                    
+                                    MIT License
+
+                        Copyright (c) 2023 AbdeRaouf-Laib
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+            furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+                copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                                    SOFTWARE.
+/*********************************************************************************/
+
+/****************************General code reading tips****************************\
+*                                                                                 *  
+*                                                                                 *
+* !! The program is a terminal application so a library is included ncurses lib   *
+* !! W__ : is a window;                                                           *
+* !! F__ : is a fonction;                                                         *
+* !! Almost all variants have work or place names;                                *
+* !! The code depends a lot on functionality                                      *
+* !! The condition is usually without {} which means it only executes one command *
+*                                                                                 *
+*                                                                                 *
+/*********************************************************************************/                                                                              
+
 #include <stdio.h>
 #include <ncurses.h>
-#include "defining.h"
 #include "logo_face.h"
 
 //defind window
@@ -16,6 +52,7 @@ WINDOW * W__list2_of_using;
 WINDOW * W__how_use;
 WINDOW * W__return;
 WINDOW * W__exit;
+
 /*Variables are used to define colors*/
 #define BW 1
 #define BLW 2
@@ -43,6 +80,7 @@ WINDOW * W__exit;
 #define x__list2 1
 #define returnandexit__width 19
 #define returnanfexit__heigth 3
+
 //define values
 int Fonction__Key__values;
 int Key__values1;
@@ -53,19 +91,22 @@ int effect__upanddown2 = 0;
 int effect__upanddown3 = 0;
 int y__W__list2;
 int x__W__lisr2;
+int rtu_print_face;
+int rtu_print_face2;
+
 //declration of fonction
-void Color(); 
-int print_face();
+void F__Color(); 
+int F__print_face();
 void F__vertion_sponsor();
-int Face_About();
-int face_about(int k);
-int face_hello(int *y1,int *x1);
-void face_title(int y1,int x1,int *z1,int *r1);
-void face_list(int z1,int r1);
-int face_F1();
-int print_face2();
-int print_list_using();
-void print_list2_of_using();
+int F__face_about();
+int F__about(int k);
+int F__welcome(int *y1,int *x1);
+void F__title(int y1,int x1,int *z1,int *r1);
+void F__list(int z1,int r1);
+int F__face_F1();;
+int F__print_face2();
+int F__print_list_using();
+void F__print_list2_of_using();
 void F__list2_of_using();
 void F__how_use();
 void F__returnandexit();
@@ -77,16 +118,16 @@ int main(){
     noecho();
     curs_set(0);
     start_color();
-    Color();
+    F__Color();
     keypad(stdscr,TRUE);
     refresh();
-    int rtu1 = print_face();
-    if(rtu1 == 27){
+    rtu_print_face = F__print_face();
+    if(rtu_print_face == esc){
         endwin();
         return 0;
     }
-    int rtu2 = print_face2();
-    if(rtu2 == space)
+    int rtu_print_face2 = F__print_face2();
+    if(rtu_print_face2 == space)
         goto dubT;
     
     clear();
@@ -95,7 +136,7 @@ int main(){
 }
 
 /*define colors*/
-void Color(){
+void F__Color(){
     init_pair(BW, COLOR_BLACK, COLOR_WHITE);
     init_pair(BLW, COLOR_BLUE, COLOR_WHITE);
     init_pair(BLB, COLOR_BLUE, COLOR_BLACK);
@@ -104,7 +145,7 @@ void Color(){
 
 
 //face app fonction
-int print_face(){
+int F__print_face(){
     dub:
     Key__values1 = curs_down;
     int k = 0;
@@ -114,10 +155,10 @@ int print_face(){
         int y1;
         int z1,r1;
         
-        face_about(k); 
-        face_hello(&y1,&x1);
-        face_title(y1,x1,&z1,&r1);
-        face_list(z1,r1);
+        F__about(k); 
+        F__welcome(&y1,&x1);
+        F__title(y1,x1,&z1,&r1);
+        F__list(z1,r1);
         F__vertion_sponsor();
         
         delwin(W__logo);
@@ -128,15 +169,13 @@ int print_face(){
             Key__values1 = getch();
             if(Key__values1 == curs_down || Key__values1 == curs_up)
                 k++;
-
-            if(k == 1){
+            if(k == 1)
                 if(Key__values1 == enter){
                     clear();
                     refresh();
-                    Key__values1 = Face_About();
+                    Key__values1 = F__face_about();
                     break;
                 }
-            }
             if(k > 1)
                 k = 0;
 
@@ -144,7 +183,7 @@ int print_face(){
     if(Key__values1 == f1){
         clear();
         refresh();
-        Key__values1 = face_F1();
+        Key__values1 = F__face_F1();;
     }
     if(Key__values1 == 0)
         goto dub;  
@@ -161,7 +200,7 @@ void F__vertion_sponsor(){
 }
 
 //print the about content 
-int Face_About(){
+int F__face_about(){
         W__ABOUT = newwin(3,40,17,60);
         wrefresh(W__ABOUT);
         wprintw(W__ABOUT,"NOT FOUND!!!press 'enter' for return...");
@@ -175,16 +214,16 @@ int Face_About(){
         else{
             clear();
             refresh();
-            Face_About();
+            F__face_about();
         }
 }
 
 //print the about window 
-int face_about(int k){
+int F__about(int k){
     W__about = newwin(3,11,1,155);
-    if( k == 1){
+    if( k == 1)
         wbkgd(W__about, COLOR_PAIR(BW));
-    }
+    
     box(W__about,0,0);
     wattron(W__about,A_BOLD);
     mvwprintw(W__about,1,1,"ABOUT (!)");
@@ -194,7 +233,7 @@ int face_about(int k){
 }
 
 //print welcome
-int face_hello(int *y1,int *x1){
+int F__welcome(int *y1,int *x1){
     int y,x; 
     W__welcome = newwin(4,12,3,8);
     wattron(W__welcome,A_BOLD);
@@ -208,7 +247,7 @@ int face_hello(int *y1,int *x1){
 }
 
 //Calling the logo function from a logo_face lib
-void face_title(int y1,int x1,int *z1,int *r1){
+void F__title(int y1,int x1,int *z1,int *r1){
     ftitle_logo(8,14);
     int z,r;
     getyx(W__logo, z, r);
@@ -217,7 +256,7 @@ void face_title(int y1,int x1,int *z1,int *r1){
 }
 
 //useing list 
-void face_list(int z1,int r1){
+void F__list(int z1,int r1){
     W__list_of_using = newwin(4, 45,z1 + 14, r1 );
     wprintw(W__list_of_using,("!!!....press ('F1') how to use ;\n"));
     wprintw(W__list_of_using,("!!!....press ('ENTER') to continue ;\n"));
@@ -226,7 +265,7 @@ void face_list(int z1,int r1){
 }
 
 //print f1 content 
-int face_F1(){
+int F__face_F1(){
     W__F1 = newwin(3,40,17,60);
         wrefresh(W__F1);
         wprintw(W__F1,"NOT FOUND!!!press 'ENTER' for return...");
@@ -240,10 +279,10 @@ int face_F1(){
         else{
             clear();
             refresh();
-            face_F1();
+            F__face_F1();;
         }
 }
-int print_face2(){
+int F__print_face2(){
     do{
         if(Key__values2 == curs_right)
             effect__leftandright++;
@@ -260,7 +299,7 @@ int print_face2(){
             effect__upanddown1 = 0;
         clear();
         refresh();
-        print_list2_of_using();
+        F__print_list2_of_using();
         Key__values2 = getch();
         if(effect__leftandright == 0)
             if(effect__upanddown1 == 0)
@@ -275,7 +314,7 @@ int print_face2(){
     return Key__values2;
 }
 
-void print_list2_of_using(){
+void F__print_list2_of_using(){
     W__main = newwin(main__height,main__width,yx__main,yx__main);
     wborder(W__main,'|','|','-','-','+','+','+','+');
     if(effect__leftandright != 0){
@@ -286,7 +325,7 @@ void print_list2_of_using(){
    }
    else if(effect__leftandright == 0){
         F__list2_of_using();
-        wbkgd(W__main,COLOR_PAIR(1));
+        wbkgd(W__main,COLOR_PAIR(BW));
         wattron(W__main,A_BOLD);
             mvwprintw(W__main,1,7,"main");
         wattroff(W__main,A_BOLD);
@@ -323,10 +362,10 @@ void F__returnandexit(){
     }
     else if(effect__leftandright == 0){
         if(effect__upanddown1 == 0){
-                wattron(W__return,COLOR_PAIR(3));
+                wattron(W__return,COLOR_PAIR(BLB));
                 box(W__return,0,0);
                 mvwprintw(W__return,1,1.5,"*.....return   ");
-                wattroff(W__return,COLOR_PAIR(3)); 
+                wattroff(W__return,COLOR_PAIR(BLB)); 
                 box(W__exit,0,0);
                 mvwprintw(W__exit,1,1.5,"*.....exit   ");
                 wrefresh(W__exit);    
@@ -334,10 +373,10 @@ void F__returnandexit(){
         else if(effect__upanddown1 == 1){   
             box(W__return,0,0);
             mvwprintw(W__return,1,1.5,"*.....return");
-            wattron(W__exit,COLOR_PAIR(3));
+            wattron(W__exit,COLOR_PAIR(BLB));
                box(W__exit,0,0);
                mvwprintw(W__exit,1,1.5,"*.....exit       ");
-            wattroff(W__exit,COLOR_PAIR(3));
+            wattroff(W__exit,COLOR_PAIR(BLB));
         }
     }    
 }
