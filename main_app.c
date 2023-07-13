@@ -38,7 +38,7 @@ WINDOW * W__exit;
 #define list__height 19 
 #define yx__main 0 
 #define width__list2 22
-#define heigth__list2 19
+#define heigth__list2 15
 #define y__list2 3
 #define x__list2 1
 #define returnandexit__width 19
@@ -71,6 +71,7 @@ void F__how_use();
 void F__returnandexit();
 
 int main(){
+    dubT:
     initscr();
     cbreak();
     noecho();
@@ -78,11 +79,19 @@ int main(){
     start_color();
     Color();
     keypad(stdscr,TRUE);
-    mousemask(ALL_MOUSE_EVENTS, NULL);
     refresh();
-    print_face();
+    int rtu1 = print_face();
+    if(rtu1 == 27){
+        endwin();
+        return 0;
+    }
+    int rtu2 = print_face2();
+    if(rtu2 == space)
+        goto dubT;
     
+    clear();
     endwin();
+    return 0;
 }
 
 /*define colors*/
@@ -139,11 +148,6 @@ int print_face(){
     }
     if(Key__values1 == 0)
         goto dub;  
-    if(Key__values1 == enter){
-        clear();
-        refresh();
-        print_face2();
-    }
     if(Key__values1 == esc)
         return Key__values1;
     
@@ -254,10 +258,21 @@ int print_face2(){
                 effect__upanddown1++;
         if(effect__upanddown1 > 1)
             effect__upanddown1 = 0;
+        clear();
         refresh();
         print_list2_of_using();
+        Key__values2 = getch();
+        if(effect__leftandright == 0)
+            if(effect__upanddown1 == 0)
+                if(Key__values2 == enter){
+                    Key__values2 = space;
+                    break;
+                }
+
     }while(Key__values2 != 10 && Key__values2 != 32 && Key__values2 != 27);
-    return 0;
+    clear();
+    refresh();
+    return Key__values2;
 }
 
 void print_list2_of_using(){
